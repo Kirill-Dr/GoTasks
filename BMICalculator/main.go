@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+const IMTPower = 2
+
 func main() {
 	fmt.Println("___Calculator of BMI___")
 	userWeight, userHeight := getUserInput()
@@ -17,10 +19,9 @@ func outputResult(BMI float64) {
 	fmt.Println(result)
 }
 
-func calculateBMI(userWeight float64, userHeight float64) float64 {
-	const IMTPower = 2
-	BMI := userWeight / math.Pow(userHeight/100, IMTPower)
-	return BMI
+func calculateBMI(userWeight float64, userHeight float64) (BMI float64) {
+	BMI = userWeight / math.Pow(userHeight/100, IMTPower)
+	return
 }
 
 func getUserInput() (float64, float64) {
