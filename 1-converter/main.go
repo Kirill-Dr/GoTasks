@@ -2,11 +2,23 @@ package main
 
 import "fmt"
 
+const USDToEUR float64 = 0.85
+const USDToRUB float64 = 78.22
+
 func main() {
-	const USDToEUR float64 = 0.85
-	const USDToRUB float64 = 78.22
+	amount := getUserInput()
+	result := calculate(amount, "EUR", "RUB")
+	fmt.Printf("%.2f EUR = %.2f RUB.", amount, result)
+}
 
-	EURToRUB := (1.0 / USDToEUR) * USDToRUB
+func getUserInput() float64 {
+	var amount float64
+	fmt.Print("Enter amount of money: ")
+	fmt.Scan(&amount)
+	return amount
+}
 
-	fmt.Printf("1 EUR = %.2f RUB.", EURToRUB)
+func calculate(amount float64, originalCurrency string, targetCurrenct string) float64 {
+	EURToRUB := (amount / USDToEUR) * USDToRUB
+	return EURToRUB
 }
