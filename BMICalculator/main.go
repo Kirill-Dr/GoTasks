@@ -12,6 +12,17 @@ func main() {
 	userWeight, userHeight := getUserInput()
 	BMI := calculateBMI(userWeight, userHeight)
 	outputResult(BMI)
+	if BMI < 16 {
+		fmt.Println("You are severely underweight")
+	} else if BMI < 18.5 {
+		fmt.Println("You are underweight")
+	} else if BMI < 25 {
+		fmt.Println("You are normal weight")
+	} else if BMI < 30 {
+		fmt.Println("You are overweight")
+	} else {
+		fmt.Println("You are obese")
+	}
 }
 
 func outputResult(BMI float64) {
