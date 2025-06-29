@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math"
 )
@@ -11,7 +12,11 @@ func main() {
 	fmt.Println("___Calculator of BMI___")
 	for {
 		userWeight, userHeight := getUserInput()
-		BMI := calculateBMI(userWeight, userHeight)
+		BMI, err := calculateBMI(userWeight, userHeight)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 		outputResult(BMI)
 		isRepeateCalculation := checkRepeatCalculation()
 		if !isRepeateCalculation {
@@ -37,18 +42,31 @@ func outputResult(BMI float64) {
 	}
 }
 
-func calculateBMI(userWeight float64, userHeight float64) (BMI float64) {
-	BMI = userWeight / math.Pow(userHeight/100, IMTPower)
-	return
+func calculateBMI(userWeight float64, userHeight float64) (float64, error) {
+	if userWeight <= 0 || userHeight <= 0 {
+		return 0, errors.New("Weight and height must be greater than 0")
+	}
+	BMI := userWeight / math.Pow(userHeight/100, IMTPower)
+	return BMI, nil
 }
 
 func getUserInput() (float64, float64) {
 	var userWeight float64
 	var userHeight float64
 	fmt.Print("Enter your weight (kg): ")
-	fmt.Scan(&userWeight)
+	_, errWeight := fmt.Scan(&userWeight)
+	if errWeight != nil {
+		var discard string
+		fmt.Scanln(&discard)
+		return 0, 0
+	}
 	fmt.Print("Enter your height (cm): ")
-	fmt.Scan(&userHeight)
+	_, errHeight := fmt.Scan(&userHeight)
+	if errHeight != nil {
+		var discard string
+		fmt.Scanln(&discard)
+		return 0, 0
+	}
 	return userWeight, userHeight
 }
 
