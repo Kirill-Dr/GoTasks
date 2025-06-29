@@ -9,4 +9,6 @@ func main() {
 	fmt.Println(transactions[1])
 	banks[0] = "Тинькофф"
 	fmt.Println(banks)
+	partial := transactions[1:4]
+	fmt.Println(partial)
 }
