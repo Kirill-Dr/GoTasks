@@ -9,13 +9,17 @@ import (
 const IMTPower = 2
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recover ", r)
+		}
+	}()
 	fmt.Println("___Calculator of BMI___")
 	for {
 		userWeight, userHeight := getUserInput()
 		BMI, err := calculateBMI(userWeight, userHeight)
 		if err != nil {
-			fmt.Println(err)
-			continue
+			panic(err)
 		}
 		outputResult(BMI)
 		isRepeateCalculation := checkRepeatCalculation()
