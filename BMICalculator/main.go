@@ -9,9 +9,20 @@ const IMTPower = 2
 
 func main() {
 	fmt.Println("___Calculator of BMI___")
-	userWeight, userHeight := getUserInput()
-	BMI := calculateBMI(userWeight, userHeight)
-	outputResult(BMI)
+	for {
+		userWeight, userHeight := getUserInput()
+		BMI := calculateBMI(userWeight, userHeight)
+		outputResult(BMI)
+		isRepeateCalculation := checkRepeatCalculation()
+		if !isRepeateCalculation {
+			break
+		}
+	}
+}
+
+func outputResult(BMI float64) {
+	result := fmt.Sprintf("Your BMI is: %.0f", BMI)
+	fmt.Println(result)
 	switch {
 	case BMI < 16:
 		fmt.Println("You are severely underweight")
@@ -24,11 +35,6 @@ func main() {
 	default:
 		fmt.Println("You are obese")
 	}
-}
-
-func outputResult(BMI float64) {
-	result := fmt.Sprintf("Your BMI is: %.0f", BMI)
-	fmt.Println(result)
 }
 
 func calculateBMI(userWeight float64, userHeight float64) (BMI float64) {
@@ -44,4 +50,14 @@ func getUserInput() (float64, float64) {
 	fmt.Print("Enter your height (cm): ")
 	fmt.Scan(&userHeight)
 	return userWeight, userHeight
+}
+
+func checkRepeatCalculation() bool {
+	var userChoice string
+	fmt.Print("Do you want to continue? (y/n): ")
+	fmt.Scan(&userChoice)
+	if userChoice == "y" || userChoice == "Y" {
+		return true
+	}
+	return false
 }
