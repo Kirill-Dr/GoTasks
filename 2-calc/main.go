@@ -21,7 +21,7 @@ func chooseOperation() string {
 		fmt.Println("1. SUM")
 		fmt.Println("2. AVG")
 		fmt.Println("3. MED")
-		fmt.Print("Enter your choice (1-3):")
+		fmt.Print("Enter your choice (SUM/AVG/MED):")
 
 		var choice string
 		_, err := fmt.Scanln(&choice)
@@ -29,15 +29,17 @@ func chooseOperation() string {
 			var discard string
 			fmt.Scanln(&discard)
 			fmt.Println("Error: input is not valid")
-			fmt.Println("Invalid choice. Please enter 1, 2, or 3.")
+			fmt.Println("Invalid choice. Please enter SUM, AVG, or MED.")
 			continue
 		}
 
-		if choice == "1" || choice == "2" || choice == "3" {
+		choice = strings.TrimSpace(strings.ToUpper(choice))
+
+		if choice == "SUM" || choice == "AVG" || choice == "MED" {
 			return choice
 		}
 
-		fmt.Println("Invalid choice. Please enter 1, 2, or 3.")
+		fmt.Println("Invalid choice. Please enter SUM, AVG, or MED.")
 	}
 }
 
@@ -93,21 +95,21 @@ func getNumbersFromUser() []float64 {
 
 func calculate(operation string, numbers []float64) float64 {
 	switch operation {
-	case "1":
+	case "SUM":
 		sum := 0.0
 		for _, num := range numbers {
 			sum += num
 		}
 		return sum
 
-	case "2":
+	case "AVG":
 		sum := 0.0
 		for _, num := range numbers {
 			sum += num
 		}
 		return sum / float64(len(numbers))
 
-	case "3":
+	case "MED":
 		sort.Float64s(numbers)
 		mid := len(numbers) / 2
 		if len(numbers)%2 == 0 {
