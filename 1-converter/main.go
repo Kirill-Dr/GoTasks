@@ -24,6 +24,7 @@ var currencyOrder = []string{"USD", "EUR", "RUB"}
 
 func main() {
 	fmt.Println("--- Converter currencies ---")
+
 	for {
 		originalCurrency, amount, targetCurrency := getUserInput()
 		result := calculate(amount, originalCurrency, targetCurrency)
