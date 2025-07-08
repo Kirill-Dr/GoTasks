@@ -1,21 +1,63 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
-	m := map[string]string{
-		"First": "https://first.com",
+	bookmarks := map[string]string{}
+	fmt.Println("--- Bookmarks ---")
+	for {
+		action := getMenu()
+		switch action {
+		case 1:
+			getAllBookmarks(bookmarks)
+		case 2:
+			bookmarks = addBookmark(bookmarks)
+		case 3:
+			bookmarks = deleteBookmark(bookmarks)
+		case 4:
+			return
+		}
 	}
-	fmt.Println(m)
-	fmt.Println(m["First"])
-	m["First"] = "https://firstUpdated.com"
-	fmt.Println(m)
-	m["Second"] = "https://second.com"
-	m["Third"] = "https://third.com"
-	fmt.Println(m)
-	delete(m, "Third")
-	fmt.Println(m)
-	for key, value := range m {
-		fmt.Println(key, value)
+}
+
+func getMenu() int {
+	var choice int
+	fmt.Println("Choose action:")
+	fmt.Println("1. Get all bookmarks")
+	fmt.Println("2. Add bookmark")
+	fmt.Println("3. Delete bookmark")
+	fmt.Println("4. Exit")
+	fmt.Scan(&choice)
+	return choice
+}
+
+func getAllBookmarks(bookmarks map[string]string) {
+	if len(bookmarks) == 0 {
+		fmt.Println("No bookmarks found")
+		return
 	}
+	for key, value := range bookmarks {
+		fmt.Println(key, "->", value)
+	}
+}
+
+func addBookmark(bookmarks map[string]string) map[string]string {
+	var newBookmarkKey string
+	var newBookmarkValue string
+	fmt.Println("Enter bookmark key:")
+	fmt.Scan(&newBookmarkKey)
+	fmt.Println("Enter bookmark value:")
+	fmt.Scan(&newBookmarkValue)
+	bookmarks[newBookmarkKey] = newBookmarkValue
+	return bookmarks
+}
+
+func deleteBookmark(bookmarks map[string]string) map[string]string {
+	var bookmarkKey string
+	fmt.Println("Enter bookmark key to delete:")
+	fmt.Scan(&bookmarkKey)
+	delete(bookmarks, bookmarkKey)
+	return bookmarks
 }
