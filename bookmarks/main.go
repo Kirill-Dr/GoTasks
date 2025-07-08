@@ -4,8 +4,10 @@ import (
 	"fmt"
 )
 
+type bookmarkMap = map[string]string
+
 func main() {
-	bookmarks := map[string]string{}
+	bookmarks := bookmarkMap{}
 	fmt.Println("--- Bookmarks ---")
 Menu:
 	for {
@@ -34,7 +36,7 @@ func getMenu() int {
 	return choice
 }
 
-func getAllBookmarks(bookmarks map[string]string) {
+func getAllBookmarks(bookmarks bookmarkMap) {
 	if len(bookmarks) == 0 {
 		fmt.Println("No bookmarks found")
 		return
@@ -44,7 +46,7 @@ func getAllBookmarks(bookmarks map[string]string) {
 	}
 }
 
-func addBookmark(bookmarks map[string]string) map[string]string {
+func addBookmark(bookmarks bookmarkMap) bookmarkMap {
 	var newBookmarkKey string
 	var newBookmarkValue string
 	fmt.Println("Enter bookmark key:")
@@ -55,7 +57,7 @@ func addBookmark(bookmarks map[string]string) map[string]string {
 	return bookmarks
 }
 
-func deleteBookmark(bookmarks map[string]string) map[string]string {
+func deleteBookmark(bookmarks bookmarkMap) bookmarkMap {
 	var bookmarkKey string
 	fmt.Println("Enter bookmark key to delete:")
 	fmt.Scan(&bookmarkKey)
