@@ -7,6 +7,7 @@ import (
 func main() {
 	bookmarks := map[string]string{}
 	fmt.Println("--- Bookmarks ---")
+Menu:
 	for {
 		action := getMenu()
 		switch action {
@@ -17,7 +18,7 @@ func main() {
 		case 3:
 			bookmarks = deleteBookmark(bookmarks)
 		case 4:
-			return
+			break Menu
 		}
 	}
 }
