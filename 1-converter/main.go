@@ -1,39 +1,50 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 )
 
-var exchangeRates = map[string]map[string]float64{
-	"USD": {
-		"EUR": 0.85,
-		"RUB": 78.22,
-	},
-	"EUR": {
-		"USD": 1.0 / 0.85,
-		"RUB": 78.22 / 0.85,
-	},
-	"RUB": {
-		"USD": 1.0 / 78.22,
-		"EUR": 0.85 / 78.22,
-	},
-}
-
-var currencyOrder = []string{"USD", "EUR", "RUB"}
+type exchangeRatesType = map[string]map[string]float64
 
 func main() {
+	var exchangeRates = exchangeRatesType{
+		"USD": {
+			"EUR": 0.85,
+			"RUB": 78.08,
+		},
+		"EUR": {
+			"USD": 1.17,
+			"RUB": 91.45,
+		},
+		"RUB": {
+			"USD": 0.013,
+			"EUR": 0.011,
+		},
+	}
+
+	var currencyOrder = []string{"USD", "EUR", "RUB"}
+
 	fmt.Println("--- Converter currencies ---")
 
 	for {
-		originalCurrency, amount, targetCurrency := getUserInput()
-		result := calculate(amount, originalCurrency, targetCurrency)
-		fmt.Printf("%.2f %s = %.2f %s\n", amount, originalCurrency, result, targetCurrency)
-
-		if !askToContinue() {
+		originalCurrency, amountOfMoney, targetCurrency := getUserInput(&currencyOrder)
+		result := calculate(originalCurrency, amountOfMoney, targetCurrency, &exchangeRates)
+		fmt.Printf("%0.2f %s = %0.2f %s", amountOfMoney, originalCurrency, result, targetCurrency)
+		shouldContinue := askToContinue()
+		if !shouldContinue {
 			break
 		}
 	}
+}
+
+func getAvailableCurrencies(currencyOrder *[]string, excludeCurrency string) []string {
+	var availableCurrencies []string
+	for _, currency := range *currencyOrder {
+		if currency != excludeCurrency {
+			availableCurrencies = append(availableCurrencies, currency)
+		}
+	}
+	return availableCurrencies
 }
 
 func formatCurrencies(currencies []string) string {
@@ -47,37 +58,25 @@ func formatCurrencies(currencies []string) string {
 	return result
 }
 
-func getAvailableCurrencies(excludeCurrency string) []string {
-	var available []string
-	for currency := range exchangeRates {
-		if currency != excludeCurrency {
-			available = append(available, currency)
-		}
-	}
-	return available
-}
-
-func getAllCurrencies() string {
-	return formatCurrencies(currencyOrder)
-}
-
-func getUserInput() (string, float64, string) {
+func getUserInput(currencyOrder *[]string) (string, float64, string) {
 	var originalCurrency string
-	var amount float64
+	var amountOfMoney float64
 	var targetCurrency string
 
 	for {
-		fmt.Print("Enter original currency " + getAllCurrencies() + ": ")
-		_, errorOriginalCurrency := fmt.Scan(&originalCurrency)
-		if errorOriginalCurrency != nil {
-			var discard string
-			fmt.Scanln(&discard)
-			fmt.Println("Original currency is not valid " + getAllCurrencies())
-			continue
-		}
+		availableCurrencies := getAvailableCurrencies(currencyOrder, "")
+		fmt.Print("Enter original currency (" + formatCurrencies(availableCurrencies) + "): ")
+		fmt.Scan(&originalCurrency)
 
-		if _, exists := exchangeRates[originalCurrency]; !exists {
-			fmt.Println("Currency '" + originalCurrency + "' is not supported. Available: " + getAllCurrencies())
+		validCurrency := false
+		for _, currency := range availableCurrencies {
+			if currency == originalCurrency {
+				validCurrency = true
+				break
+			}
+		}
+		if !validCurrency {
+			fmt.Println("Invalid currency. Available currencies:", formatCurrencies(availableCurrencies))
 			continue
 		}
 		break
@@ -85,71 +84,52 @@ func getUserInput() (string, float64, string) {
 
 	for {
 		fmt.Print("Enter amount of money: ")
-		_, errorAmount := fmt.Scan(&amount)
-		if amount <= 0 {
+		fmt.Scan(&amountOfMoney)
+		if amountOfMoney <= 0 {
 			fmt.Println("Amount must be greater than 0")
 			continue
 		}
-		if errorAmount != nil {
-			var discard string
-			fmt.Scanln(&discard)
-			fmt.Println("Amount is not valid")
-			continue
-		}
 		break
 	}
-
-	availableCurrencies := getAvailableCurrencies(originalCurrency)
-	formattedCurrencies := formatCurrencies(availableCurrencies)
 
 	for {
-		fmt.Printf("Enter target currency (%s): ", formattedCurrencies)
-		_, errorTargetCurrency := fmt.Scan(&targetCurrency)
-		if errorTargetCurrency != nil {
-			var discard string
-			fmt.Scanln(&discard)
-			fmt.Println("Target currency is not valid")
-			continue
+		availableCurrencies := getAvailableCurrencies(currencyOrder, originalCurrency)
+		fmt.Print("Enter target currency (" + formatCurrencies(availableCurrencies) + "): ")
+		fmt.Scan(&targetCurrency)
+
+		validCurrency := false
+		for _, currency := range availableCurrencies {
+			if currency == targetCurrency {
+				validCurrency = true
+				break
+			}
 		}
-		if _, exists := exchangeRates[targetCurrency]; !exists {
-			availableCurrencies := getAvailableCurrencies(originalCurrency)
-			formattedAvailable := formatCurrencies(availableCurrencies)
-			fmt.Println("Currency '" + targetCurrency + "' is not supported. Available: " + formattedAvailable)
-			continue
-		}
-		if originalCurrency == targetCurrency {
-			fmt.Println("Original and target currencies cannot be the same")
+		if !validCurrency {
+			fmt.Println("Invalid currency. Available currencies:", formatCurrencies(availableCurrencies))
 			continue
 		}
 		break
 	}
 
-	return originalCurrency, amount, targetCurrency
+	return originalCurrency, amountOfMoney, targetCurrency
 }
 
-func getExchangeRate(fromCurrency, toCurrency string) (float64, error) {
-	if rates, exists := exchangeRates[fromCurrency]; exists {
-		if rate, exists := rates[toCurrency]; exists {
-			return rate, nil
-		}
-	}
-
-	return 0, errors.New("Exchange rate not found")
-}
-
-func calculate(amount float64, originalCurrency string, targetCurrency string) float64 {
-	rate, _ := getExchangeRate(originalCurrency, targetCurrency)
-	return amount * rate
+func calculate(originalCurrency string, amountOfMoney float64, targetCurrency string, exchangeRates *exchangeRatesType) float64 {
+	rate := (*exchangeRates)[originalCurrency][targetCurrency]
+	return amountOfMoney * rate
 }
 
 func askToContinue() bool {
-	var choice string
+	var answer string
 	for {
-		fmt.Print("Do you want to continue? (y/n): ")
-		fmt.Scan(&choice)
-		if choice == "y" || choice == "Y" {
+		fmt.Print("\nDo you want to continue? (y/n): ")
+		fmt.Scan(&answer)
+		if answer == "y" || answer == "Y" {
 			return true
+		} else if answer == "n" || answer == "N" {
+			return false
+		} else {
+			fmt.Println("Invalid input. Please enter y or n")
 		}
-		return false
 	}
 }
