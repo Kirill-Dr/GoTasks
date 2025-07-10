@@ -13,13 +13,13 @@ func main() {
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
-	account := account{
+	myAccount := account{
 		password: password,
 		url:      url,
 		login:    login,
 	}
 
-	outputPassword(login, password, url)
+	outputPassword(myAccount)
 }
 
 func promptData(prompt string) string {
@@ -29,6 +29,6 @@ func promptData(prompt string) string {
 	return res
 }
 
-func outputPassword(login, password, url string) {
-	fmt.Println(login, password, url)
+func outputPassword(acc account) {
+	fmt.Println(acc.login, acc.password, acc.url)
 }
