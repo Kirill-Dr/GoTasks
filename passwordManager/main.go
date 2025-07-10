@@ -13,6 +13,12 @@ func main() {
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
+	account := account{
+		password: password,
+		url:      url,
+		login:    login,
+	}
+
 	outputPassword(login, password, url)
 }
 
