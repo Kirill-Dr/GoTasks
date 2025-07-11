@@ -26,36 +26,46 @@ func (acc *account) generatePassword(n int) {
 }
 
 func newAccount(login, password, urlString string) (*account, error) {
+	if login == "" {
+		return nil, errors.New("INVALID_LOGIN")
+	}
+
 	_, err := url.ParseRequestURI(urlString)
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
 
-	return &account{
+	newAcc := &account{
 		url:      urlString,
 		login:    login,
 		password: password,
-	}, nil
+	}
+
+	if password == "" {
+		newAcc.generatePassword(10)
+	}
+
+	return newAcc, nil
 }
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 func main() {
 	login := promptData("Enter login: ")
+	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
-	myAccount, err := newAccount(login, "", url)
+	myAccount, err := newAccount(login, password, url)
 	if err != nil {
-		fmt.Println("Invalid format of URL")
+		fmt.Println("Invalid format of data")
 		return
 	}
-	myAccount.generatePassword(10)
 	myAccount.outputPassword()
 }
 
 func promptData(prompt string) string {
 	fmt.Print(prompt)
 	var res string
-	fmt.Scan(&res)
+	fmt.Scanln(&res)
 	return res
 }
