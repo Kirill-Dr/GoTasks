@@ -1,50 +1,46 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
-	"os"
 	"time"
 )
 
+type Bin struct {
+	id        string
+	private   bool
+	createdAt time.Time
+	name      string
+}
+
 type BinList struct {
-	ID        string
-	Private   bool
-	CreatedAt time.Time
-	Name      string
+	Bins []Bin
 }
 
-func newBin(id string, private bool, name string) BinList {
-	newBin := BinList{
-		ID:        id,
-		Private:   private,
-		CreatedAt: time.Now(),
-		Name:      name,
+func newBin(id string, private bool, name string) Bin {
+	return Bin{
+		id:        id,
+		private:   private,
+		createdAt: time.Now(),
+		name:      name,
 	}
-
-	data, _ := os.ReadFile("BinList.json")
-	var bins []BinList
-
-	if len(data) > 0 {
-		json.Unmarshal(data, &bins)
-	}
-
-	bins = append(bins, newBin)
-
-	jsonData, _ := json.MarshalIndent(bins, "", "  ")
-	os.WriteFile("BinList.json", jsonData, 0644)
-
-	fmt.Println("Bin created and saved to BinList.json")
-	return newBin
 }
 
-var binIdLetters = []rune("0123456789")
+func newBinList() BinList {
+	return BinList{
+		Bins: []Bin{},
+	}
+}
+
+func addBinToList(binList *BinList, bin Bin) {
+	binList.Bins = append(binList.Bins, bin)
+}
 
 func generateBinID() string {
 	binId := make([]rune, 10)
+	letters := []rune("0123456789")
 	for i := range binId {
-		binId[i] = binIdLetters[rand.Intn(len(binIdLetters))]
+		binId[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(binId)
 }
@@ -66,8 +62,15 @@ func getBinData() (private bool, name string) {
 }
 
 func main() {
-	fmt.Println("--- Password Manager ---")
+	fmt.Println("--- Password Manager CLI ---")
+
+	binList := newBinList()
+
 	private, name := getBinData()
+
 	bin := newBin(generateBinID(), private, name)
-	fmt.Println(bin)
+
+	addBinToList(&binList, bin)
+
+	fmt.Print(binList)
 }
