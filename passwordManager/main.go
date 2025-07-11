@@ -1,105 +1,76 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"math/rand/v2"
-	"net/url"
+	"math/rand"
 	"time"
 )
 
-type account struct {
-	login    string
-	password string
-	url      string
-}
-
-type accountWithTimeStamp struct {
+type Bin struct {
+	id        string
+	private   bool
 	createdAt time.Time
-	updatedAt time.Time
-	account
+	name      string
 }
 
-func (acc *account) outputPassword() {
-	fmt.Println(acc.login, acc.password, acc.url)
+type BinList struct {
+	Bins []Bin
 }
 
-func (acc *account) generatePassword(n int) {
-	res := make([]rune, n)
-	for i := range res {
-		res[i] = letters[rand.IntN(len(letters))]
-	}
-	acc.password = string(res)
-}
-
-func newAccountWithTimeStamp(login, password, urlString string) (*accountWithTimeStamp, error) {
-	if login == "" {
-		return nil, errors.New("INVALID_LOGIN")
-	}
-
-	_, err := url.ParseRequestURI(urlString)
-	if err != nil {
-		return nil, errors.New("INVALID_URL")
-	}
-
-	newAcc := &accountWithTimeStamp{
+func newBin(id string, private bool, name string) Bin {
+	return Bin{
+		id:        id,
+		private:   private,
 		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		account: account{
-			url:      urlString,
-			login:    login,
-			password: password,
-		},
+		name:      name,
 	}
-
-	if password == "" {
-		newAcc.generatePassword(10)
-	}
-
-	return newAcc, nil
 }
 
-// func newAccount(login, password, urlString string) (*account, error) {
-// 	if login == "" {
-// 		return nil, errors.New("INVALID_LOGIN")
-// 	}
+func newBinList() BinList {
+	return BinList{
+		Bins: []Bin{},
+	}
+}
 
-// 	_, err := url.ParseRequestURI(urlString)
-// 	if err != nil {
-// 		return nil, errors.New("INVALID_URL")
-// 	}
+func addBinToList(binList *BinList, bin Bin) {
+	binList.Bins = append(binList.Bins, bin)
+}
 
-// 	newAcc := &account{
-// 		url:      urlString,
-// 		login:    login,
-// 		password: password,
-// 	}
+func generateBinID() string {
+	binId := make([]rune, 10)
+	letters := []rune("0123456789")
+	for i := range binId {
+		binId[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(binId)
+}
 
-// 	if password == "" {
-// 		newAcc.generatePassword(10)
-// 	}
+func getBinData() (private bool, name string) {
+	var privateStr string
+	fmt.Print("Enter private (true/false): ")
+	fmt.Scanln(&privateStr)
 
-// 	return newAcc, nil
-// }
+	if privateStr == "true" {
+		private = true
+	} else {
+		private = false
+	}
 
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	fmt.Print("Enter name: ")
+	fmt.Scanln(&name)
+	return private, name
+}
 
 func main() {
-	login := promptData("Enter login: ")
-	password := promptData("Enter password: ")
-	url := promptData("Enter url: ")
+	fmt.Println("--- Password Manager CLI ---")
 
-	myAccount, err := newAccountWithTimeStamp(login, password, url)
-	if err != nil {
-		fmt.Println("Invalid format of data")
-		return
-	}
-	myAccount.outputPassword()
-}
+	binList := newBinList()
 
-func promptData(prompt string) string {
-	fmt.Print(prompt)
-	var res string
-	fmt.Scanln(&res)
-	return res
+	private, name := getBinData()
+
+	bin := newBin(generateBinID(), private, name)
+
+	addBinToList(&binList, bin)
+
+	fmt.Print(binList)
 }
