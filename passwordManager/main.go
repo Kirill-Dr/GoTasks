@@ -11,20 +11,30 @@ type account struct {
 	url      string
 }
 
+func (acc *account) outputPassword() {
+	fmt.Println(acc.login, acc.password, acc.url)
+}
+
+func (acc *account) generatePassword(n int) {
+	res := make([]rune, n)
+	for i := range res {
+		res[i] = letters[rand.IntN(len(letters))]
+	}
+	acc.password = string(res)
+}
+
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 func main() {
 	login := promptData("Enter login: ")
-	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
 	myAccount := account{
-		password: password,
-		url:      url,
-		login:    login,
+		url:   url,
+		login: login,
 	}
-
-	outputPassword(&myAccount)
+	myAccount.generatePassword(10)
+	myAccount.outputPassword()
 }
 
 func promptData(prompt string) string {
@@ -32,16 +42,4 @@ func promptData(prompt string) string {
 	var res string
 	fmt.Scan(&res)
 	return res
-}
-
-func outputPassword(acc *account) {
-	fmt.Println(acc.login, acc.password, acc.url)
-}
-
-func generatePassword(n int) string {
-	res := make([]rune, n)
-	for i := range res {
-		res[i] = letters[rand.IntN(len(letters))]
-	}
-	return string(res)
 }
