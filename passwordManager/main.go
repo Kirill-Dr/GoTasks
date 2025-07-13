@@ -3,18 +3,22 @@ package main
 import (
 	"fmt"
 	"passwordManager/account"
+	"strconv"
+
+	"github.com/fatih/color"
 )
 
 func main() {
 	fmt.Println("--- Password Manager ---")
+	vault := account.NewVault()
 Menu:
 	for {
 		choice := getMenu()
 		switch choice {
 		case 1:
-			createAccount()
+			createAccount(vault)
 		case 2:
-			findAccount()
+			findAccount(vault)
 		case 3:
 			deleteAccount()
 		default:
@@ -34,7 +38,7 @@ func getMenu() int {
 	return choice
 }
 
-func createAccount() {
+func createAccount(vault *account.Vault) {
 	login := promptData("Enter login: ")
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
@@ -44,11 +48,21 @@ func createAccount() {
 		fmt.Println("Invalid format of data")
 		return
 	}
-	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
 }
 
-func findAccount() {}
+func findAccount(vault *account.Vault) {
+	url := promptData("Enter url to find: ")
+	foundAccounts := vault.FindAccountsByUrl(url)
+	if len(foundAccounts) == 0 {
+		color.Red("No accounts found")
+		return
+	}
+	for index, account := range foundAccounts {
+		color.Cyan("Account #" + strconv.Itoa(index+1))
+		account.Output()
+	}
+}
 
 func deleteAccount() {}
 

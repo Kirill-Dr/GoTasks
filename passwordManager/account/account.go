@@ -19,8 +19,10 @@ type Account struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (acc *Account) OutputPassword() {
-	color.Cyan(acc.Login)
+func (acc *Account) Output() {
+	color.Cyan("Login: " + acc.Login)
+	color.Cyan("Password: " + acc.Password)
+	color.Cyan("Url: " + acc.Url)
 }
 
 func (acc *Account) generatePassword(n int) {

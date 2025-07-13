@@ -3,6 +3,7 @@ package account
 import (
 	"encoding/json"
 	"passwordManager/files"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -37,6 +38,17 @@ func (vault *Vault) AddAccount(account Account) {
 		color.Red("Error marshalling data.json")
 	}
 	files.WriteFile(data, "data.json")
+}
+
+func (vault *Vault) FindAccountsByUrl(url string) []Account {
+	var foundAccounts []Account
+	for _, account := range vault.Accounts {
+		isMatched := strings.Contains(account.Url, url)
+		if isMatched {
+			foundAccounts = append(foundAccounts, account)
+		}
+	}
+	return foundAccounts
 }
 
 func (vault *Vault) ToBytes() ([]byte, error) {
