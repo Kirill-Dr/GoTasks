@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	files.WriteFile("Hello", "test.txt")
 	login := promptData("Enter login: ")
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
@@ -17,7 +18,6 @@ func main() {
 		return
 	}
 	myAccount.OutputPassword()
-	files.WriteFile()
 }
 
 func promptData(prompt string) string {
