@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"passwordManager/account"
 )
 
 func main() {
@@ -9,12 +10,12 @@ func main() {
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
-	myAccount, err := newAccountWithTimeStamp(login, password, url)
+	myAccount, err := account.NewAccountWithTimeStamp(login, password, url)
 	if err != nil {
 		fmt.Println("Invalid format of data")
 		return
 	}
-	myAccount.outputPassword()
+	myAccount.OutputPassword()
 }
 
 func promptData(prompt string) string {
