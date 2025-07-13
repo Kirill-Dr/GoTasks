@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"passwordManager/account"
-	"passwordManager/files"
 )
 
 func main() {
@@ -47,12 +46,6 @@ func createAccount() {
 	}
 	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
-	data, err := vault.ToBytes()
-	if err != nil {
-		fmt.Println("Error marshalling into json:", err)
-		return
-	}
-	files.WriteFile(data, "data.json")
 }
 
 func findAccount() {}
