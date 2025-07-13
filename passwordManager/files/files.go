@@ -12,12 +12,11 @@ func WriteFile(content string, name string) {
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 	}
+	defer file.Close()
 	_, err = file.WriteString(content)
 	if err != nil {
-		file.Close()
 		fmt.Println("Error writing to file:", err)
 		return
 	}
 	fmt.Println("File written successfully")
-	file.Close()
 }
