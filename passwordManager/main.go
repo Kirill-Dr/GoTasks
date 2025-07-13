@@ -7,17 +7,25 @@ import (
 )
 
 func main() {
-	files.WriteFile("Hello", "test.txt")
+	createAccount()
+}
+
+func createAccount() {
 	login := promptData("Enter login: ")
 	password := promptData("Enter password: ")
 	url := promptData("Enter url: ")
 
-	myAccount, err := account.NewAccountWithTimeStamp(login, password, url)
+	myAccount, err := account.NewAccount(login, password, url)
 	if err != nil {
 		fmt.Println("Invalid format of data")
 		return
 	}
-	myAccount.OutputPassword()
+	file, err := myAccount.ToBytes()
+	if err != nil {
+		fmt.Println("Error marshalling into json:", err)
+		return
+	}
+	files.WriteFile(file, "data.json")
 }
 
 func promptData(prompt string) string {
