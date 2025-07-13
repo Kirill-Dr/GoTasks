@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"passwordManager/account"
+	"passwordManager/files"
 )
 
 func main() {
@@ -16,6 +17,7 @@ func main() {
 		return
 	}
 	myAccount.OutputPassword()
+	files.WriteFile()
 }
 
 func promptData(prompt string) string {
