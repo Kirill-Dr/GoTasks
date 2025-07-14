@@ -2,12 +2,16 @@ package account
 
 import (
 	"encoding/json"
-	"passwordManager/files"
 	"strings"
 	"time"
 
 	"github.com/fatih/color"
 )
+
+type DB interface {
+	Read() ([]byte, error)
+	Write([]byte)
+}
 
 type Vault struct {
 	Accounts  []Account `json:"accounts"`
@@ -16,10 +20,10 @@ type Vault struct {
 
 type VaultWithDB struct {
 	Vault
-	db files.JsonDB
+	db DB
 }
 
-func NewVault(db *files.JsonDB) *VaultWithDB {
+func NewVault(db DB) *VaultWithDB {
 	file, err := db.Read()
 	if err != nil {
 		return &VaultWithDB{
@@ -27,7 +31,7 @@ func NewVault(db *files.JsonDB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: *db,
+			db: db,
 		}
 	}
 	var vault Vault
@@ -39,12 +43,12 @@ func NewVault(db *files.JsonDB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: *db,
+			db: db,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
-		db:    *db,
+		db:    db,
 	}
 }
 
