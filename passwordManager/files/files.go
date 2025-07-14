@@ -3,6 +3,7 @@ package files
 import (
 	"fmt"
 	"os"
+	"passwordManager/output"
 )
 
 type JsonDB struct {
@@ -26,12 +27,12 @@ func (db *JsonDB) Read() ([]byte, error) {
 func (db *JsonDB) Write(content []byte) {
 	file, err := os.Create(db.filename)
 	if err != nil {
-		fmt.Println("Error creating file:", err)
+		output.PrintError(err)
 	}
 	defer file.Close()
 	_, err = file.Write(content)
 	if err != nil {
-		fmt.Println("Error writing to file:", err)
+		output.PrintError(err)
 		return
 	}
 	fmt.Println("File written successfully")

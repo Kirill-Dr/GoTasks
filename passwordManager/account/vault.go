@@ -2,10 +2,9 @@ package account
 
 import (
 	"encoding/json"
+	"passwordManager/output"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 type ByteReader interface {
@@ -45,7 +44,7 @@ func NewVault(db DB) *VaultWithDB {
 	var vault Vault
 	err = json.Unmarshal(file, &vault)
 	if err != nil {
-		color.Red("Error parsing data.json")
+		output.PrintError(err)
 		return &VaultWithDB{
 			Vault: Vault{
 				Accounts:  []Account{},
@@ -101,7 +100,7 @@ func (vault *VaultWithDB) save() {
 
 	data, err := vault.Vault.ToBytes()
 	if err != nil {
-		color.Red("Error serializing data.json")
+		output.PrintError(err)
 	}
 	vault.db.Write(data)
 }

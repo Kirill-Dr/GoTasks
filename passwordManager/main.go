@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"passwordManager/account"
 	"passwordManager/files"
+	"passwordManager/output"
 	"strconv"
 
 	"github.com/fatih/color"
@@ -46,7 +47,7 @@ func createAccount(vault *account.VaultWithDB) {
 
 	myAccount, err := account.NewAccount(login, password, url)
 	if err != nil {
-		fmt.Println("Invalid format of data")
+		output.PrintError("Invalid format of data")
 		return
 	}
 	vault.AddAccount(*myAccount)
@@ -56,7 +57,7 @@ func findAccount(vault *account.VaultWithDB) {
 	url := promptData("Enter url to find: ")
 	foundAccounts := vault.FindAccountsByUrl(url)
 	if len(foundAccounts) == 0 {
-		color.Red("No accounts found")
+		output.PrintError("No accounts found")
 		return
 	}
 	for index, account := range foundAccounts {
@@ -71,7 +72,7 @@ func deleteAccount(vault *account.VaultWithDB) {
 	if deleted {
 		color.Green("Account deleted")
 	} else {
-		color.Red("Account not found")
+		output.PrintError("Account not found")
 	}
 }
 
