@@ -1,7 +1,6 @@
 package file
 
 import (
-	"fmt"
 	"os"
 	"strings"
 )
@@ -28,17 +27,6 @@ func (file *JsonFile) IsJsonFile() bool {
 	return strings.HasSuffix(file.filename, ".json")
 }
 
-func (file *JsonFile) WriteFile(content []byte) {
-	data, err := os.Create(file.filename)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer data.Close()
-	_, err = data.Write(content)
-	if err != nil {
-		fmt.Println("Error writing to file:", err)
-		return
-	}
-	fmt.Println("File written successfully")
+func (file *JsonFile) GetFilename() string {
+	return file.filename
 }

@@ -1,20 +1,17 @@
 package main
 
 import (
-	"3-struct/bins"
-	"fmt"
+	"3-struct/services"
+	"log"
 )
 
 func main() {
-	fmt.Println("--- Password Manager CLI ---")
+	storageService := services.NewStorageService("bins.json")
+	binService := services.NewBinService()
 
-	binList := bins.NewBinList()
+	app := services.NewApplicationService(storageService, binService)
 
-	private, name := bins.GetBinData()
-
-	bin := bins.NewBin(bins.GenerateBinID(), private, name)
-
-	bins.AddBinToList(&binList, bin)
-
-	fmt.Print(binList)
+	if err := app.Run(); err != nil {
+		log.Fatalf("Application error: %v", err)
+	}
 }
