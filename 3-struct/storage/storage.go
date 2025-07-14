@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"errors"
+	"os"
 
 	"3-struct/bins"
 	"3-struct/file"
@@ -28,7 +29,11 @@ func (storage *Storage) SaveBins(binList *bins.BinList) error {
 		return errors.New("error marshalling data")
 	}
 
-	storage.jsonFile.WriteFile(data)
+	err = os.WriteFile(storage.jsonFile.GetFilename(), data, 0644)
+	if err != nil {
+		return errors.New("error writing file")
+	}
+
 	return nil
 }
 
@@ -45,7 +50,7 @@ func (storage *Storage) ReadBins() (*bins.BinList, error) {
 	var binList bins.BinList
 	err = json.Unmarshal(data, &binList)
 	if err != nil {
-		return nil, errors.New("error decoding JSON")
+		return nil, errors.New("error serializing JSON")
 	}
 
 	return &binList, nil
