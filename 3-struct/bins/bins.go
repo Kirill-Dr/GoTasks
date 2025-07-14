@@ -7,22 +7,22 @@ import (
 )
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string    `json:"id"`
+	Private   bool      `json:"private"`
+	CreatedAt time.Time `json:"created_at"`
+	Name      string    `json:"name"`
 }
 
 type BinList struct {
-	Bins []Bin
+	Bins []Bin `json:"bins"`
 }
 
 func NewBin(id string, private bool, name string) Bin {
 	return Bin{
-		id:        id,
-		private:   private,
-		createdAt: time.Now(),
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: time.Now(),
+		Name:      name,
 	}
 }
 
