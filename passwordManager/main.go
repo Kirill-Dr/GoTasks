@@ -6,6 +6,7 @@ import (
 	"passwordManager/files"
 	"passwordManager/output"
 	"strconv"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -45,7 +46,7 @@ func createAccount(vault *account.VaultWithDB) {
 
 func findAccount(vault *account.VaultWithDB) {
 	url := promptData([]string{"Enter url to find"})
-	foundAccounts := vault.FindAccountsByUrl(url)
+	foundAccounts := vault.FindAccounts(url, checkUrl)
 	if len(foundAccounts) == 0 {
 		output.PrintError("No accounts found")
 		return
@@ -54,6 +55,10 @@ func findAccount(vault *account.VaultWithDB) {
 		color.Cyan("Account #" + strconv.Itoa(index+1))
 		account.Output()
 	}
+}
+
+func checkUrl(account account.Account, str string) bool {
+	return strings.Contains(account.Url, str)
 }
 
 func deleteAccount(vault *account.VaultWithDB) {

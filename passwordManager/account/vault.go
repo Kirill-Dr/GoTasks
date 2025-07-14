@@ -3,7 +3,6 @@ package account
 import (
 	"encoding/json"
 	"passwordManager/output"
-	"strings"
 	"time"
 )
 
@@ -64,10 +63,10 @@ func (vault *VaultWithDB) AddAccount(account Account) {
 	vault.save()
 }
 
-func (vault *VaultWithDB) FindAccountsByUrl(url string) []Account {
+func (vault *VaultWithDB) FindAccounts(str string, checker func(Account, string) bool) []Account {
 	var foundAccounts []Account
 	for _, account := range vault.Accounts {
-		isMatched := strings.Contains(account.Url, url)
+		isMatched := checker(account, str)
 		if isMatched {
 			foundAccounts = append(foundAccounts, account)
 		}
@@ -80,7 +79,6 @@ func (vault *VaultWithDB) DeleteAccountByUrl(url string) bool {
 		if vault.Accounts[i].Url == url {
 			vault.Accounts = append(vault.Accounts[:i], vault.Accounts[i+1:]...)
 			vault.save()
-
 			return true
 		}
 	}
