@@ -1,9 +1,10 @@
 package files
 
 import (
-	"fmt"
 	"os"
 	"passwordManager/output"
+
+	"github.com/fatih/color"
 )
 
 type JsonDB struct {
@@ -35,5 +36,5 @@ func (db *JsonDB) Write(content []byte) {
 		output.PrintError(err)
 		return
 	}
-	fmt.Println("File written successfully")
+	color.Green("File written successfully")
 }
