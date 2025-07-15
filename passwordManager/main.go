@@ -46,7 +46,9 @@ func createAccount(vault *account.VaultWithDB) {
 
 func findAccount(vault *account.VaultWithDB) {
 	url := promptData([]string{"Enter url to find"})
-	foundAccounts := vault.FindAccounts(url, checkUrl)
+	foundAccounts := vault.FindAccounts(url, func(acc account.Account, str string) bool {
+		return strings.Contains(acc.Url, str)
+	})
 	if len(foundAccounts) == 0 {
 		output.PrintError("No accounts found")
 		return
@@ -55,10 +57,6 @@ func findAccount(vault *account.VaultWithDB) {
 		color.Cyan("Account #" + strconv.Itoa(index+1))
 		account.Output()
 	}
-}
-
-func checkUrl(account account.Account, str string) bool {
-	return strings.Contains(account.Url, str)
 }
 
 func deleteAccount(vault *account.VaultWithDB) {
