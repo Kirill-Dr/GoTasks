@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"passwordManager/encrypter"
 	"passwordManager/output"
 	"time"
 )
@@ -26,10 +27,11 @@ type Vault struct {
 
 type VaultWithDB struct {
 	Vault
-	db DB
+	db  DB
+	enc encrypter.Encrypter
 }
 
-func NewVault(db DB) *VaultWithDB {
+func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 	file, err := db.Read()
 	if err != nil {
 		return &VaultWithDB{
@@ -37,7 +39,8 @@ func NewVault(db DB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
+			enc: enc,
 		}
 	}
 	var vault Vault
@@ -49,12 +52,14 @@ func NewVault(db DB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
+			enc: enc,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
 		db:    db,
+		enc:   enc,
 	}
 }
 

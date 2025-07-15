@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"passwordManager/account"
+	"passwordManager/encrypter"
 	"passwordManager/files"
 	"passwordManager/output"
 	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 )
 
 var menu = map[string]func(*account.VaultWithDB){
@@ -29,7 +31,13 @@ var menuVariants = []string{
 
 func main() {
 	fmt.Println("--- Password Manager ---")
-	vault := account.NewVault(files.NewJsonDB("data.json"))
+
+	err := godotenv.Load()
+	if err != nil {
+		output.PrintError("Error loading .env file")
+	}
+
+	vault := account.NewVault(files.NewJsonDB("data.json"), *encrypter.NewEncrypter())
 Menu:
 	for {
 		choice := promptData(menuVariants...)
