@@ -5,9 +5,16 @@ import (
 	"3-struct/config"
 	"3-struct/services"
 	"log"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		panic(".env file not found: " + err.Error())
+	}
+
 	cfg := config.NewConfig()
 	storageService := services.NewStorageService("bins.json")
 	binService := services.NewBinService()
