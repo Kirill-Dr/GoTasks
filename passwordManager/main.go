@@ -18,12 +18,21 @@ var menu = map[string]func(*account.VaultWithDB){
 	"4": deleteAccount,
 }
 
+var menuVariants = []string{
+	"1. Create account",
+	"2. Find account by url",
+	"3. Find account by login",
+	"4. Delete account",
+	"5. Exit",
+	"Choose an option",
+}
+
 func main() {
 	fmt.Println("--- Password Manager ---")
 	vault := account.NewVault(files.NewJsonDB("data.json"))
 Menu:
 	for {
-		choice := promptData([]string{"1. Create account", "2. Find account by url", "3. Find account by login", "4. Delete account", "5. Exit", "Choose an option"})
+		choice := promptData(menuVariants...)
 		menuFunc := menu[choice]
 		if menuFunc == nil {
 			break Menu
@@ -33,9 +42,9 @@ Menu:
 }
 
 func createAccount(vault *account.VaultWithDB) {
-	login := promptData([]string{"Enter login"})
-	password := promptData([]string{"Enter password"})
-	url := promptData([]string{"Enter url"})
+	login := promptData("Enter login")
+	password := promptData("Enter password")
+	url := promptData("Enter url")
 
 	myAccount, err := account.NewAccount(login, password, url)
 	if err != nil {
@@ -46,7 +55,7 @@ func createAccount(vault *account.VaultWithDB) {
 }
 
 func findAccountByUrl(vault *account.VaultWithDB) {
-	url := promptData([]string{"Enter url to find"})
+	url := promptData("Enter url to find")
 	foundAccounts := vault.FindAccounts(url, func(acc account.Account, str string) bool {
 		return strings.Contains(acc.Url, str)
 	})
@@ -54,7 +63,7 @@ func findAccountByUrl(vault *account.VaultWithDB) {
 }
 
 func findAccountByLogin(vault *account.VaultWithDB) {
-	login := promptData([]string{"Enter login to find"})
+	login := promptData("Enter login to find")
 	foundAccounts := vault.FindAccounts(login, func(acc account.Account, str string) bool {
 		return strings.Contains(acc.Login, str)
 	})
@@ -73,7 +82,7 @@ func outputResult(accounts *[]account.Account) {
 }
 
 func deleteAccount(vault *account.VaultWithDB) {
-	url := promptData([]string{"Enter url to delete"})
+	url := promptData("Enter url to delete")
 	deleted := vault.DeleteAccountByUrl(url)
 	if deleted {
 		color.Green("Account deleted")
@@ -82,7 +91,7 @@ func deleteAccount(vault *account.VaultWithDB) {
 	}
 }
 
-func promptData[T any](prompt []T) string {
+func promptData[T any](prompt ...T) string {
 	for i, line := range prompt {
 		if i == len(prompt)-1 {
 			fmt.Printf("%v: ", line)
