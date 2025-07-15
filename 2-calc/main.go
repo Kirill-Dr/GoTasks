@@ -7,40 +7,54 @@ import (
 	"strings"
 )
 
-func main() {
-	fmt.Println("--- Calculator ---")
-	operation := chooseOperation()
-	numbers := getNumbersFromUser()
-	result := calculate(operation, numbers)
-	fmt.Printf("Result: %.2f\n", result)
+var menuOperation = map[string]func([]float64) float64{
+	"SUM": calculateSum,
+	"AVG": calculateAvg,
+	"MED": calculateMed,
 }
 
-func chooseOperation() string {
+var choiceOperation = []string{
+	"SUM - Sum of numbers",
+	"AVG - Average of numbers",
+	"MED - Median of numbers",
+	"EXIT - Exit program",
+	"Choose an option (SUM/AVG/MED/EXIT)",
+}
+
+func main() {
+	fmt.Println("--- Calculator ---")
+
 	for {
-		fmt.Println("Choose operation:")
-		fmt.Println("1. SUM")
-		fmt.Println("2. AVG")
-		fmt.Println("3. MED")
-		fmt.Print("Enter your choice (SUM/AVG/MED):")
-
-		var choice string
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			var discard string
-			fmt.Scanln(&discard)
-			fmt.Println("Error: input is not valid")
-			fmt.Println("Invalid choice. Please enter SUM, AVG, or MED.")
-			continue
-		}
-
+		choice := promptData(choiceOperation...)
 		choice = strings.TrimSpace(strings.ToUpper(choice))
 
-		if choice == "SUM" || choice == "AVG" || choice == "MED" {
-			return choice
+		if choice == "EXIT" {
+			break
 		}
 
-		fmt.Println("Invalid choice. Please enter SUM, AVG, or MED.")
+		operationFunc := menuOperation[choice]
+		if operationFunc == nil {
+			fmt.Println("Invalid choice. Exiting...")
+			break
+		}
+
+		numbers := getNumbersFromUser()
+		result := operationFunc(numbers)
+		fmt.Printf("Result: %.2f\n", result)
 	}
+}
+
+func promptData(prompt ...string) string {
+	for i, line := range prompt {
+		if i == len(prompt)-1 {
+			fmt.Printf("%v: ", line)
+		} else {
+			fmt.Println(line)
+		}
+	}
+	var res string
+	fmt.Scanln(&res)
+	return res
 }
 
 func getNumbersFromUser() []float64 {
@@ -93,31 +107,27 @@ func getNumbersFromUser() []float64 {
 	}
 }
 
-func calculate(operation string, numbers []float64) float64 {
-	switch operation {
-	case "SUM":
-		sum := 0.0
-		for _, num := range numbers {
-			sum += num
-		}
-		return sum
-
-	case "AVG":
-		sum := 0.0
-		for _, num := range numbers {
-			sum += num
-		}
-		return sum / float64(len(numbers))
-
-	case "MED":
-		sort.Float64s(numbers)
-		mid := len(numbers) / 2
-		if len(numbers)%2 == 0 {
-			return (numbers[mid-1] + numbers[mid]) / 2
-		}
-		return numbers[mid]
-
-	default:
-		return 0
+func calculateSum(numbers []float64) float64 {
+	sum := 0.0
+	for _, num := range numbers {
+		sum += num
 	}
+	return sum
+}
+
+func calculateAvg(numbers []float64) float64 {
+	sum := 0.0
+	for _, num := range numbers {
+		sum += num
+	}
+	return sum / float64(len(numbers))
+}
+
+func calculateMed(numbers []float64) float64 {
+	sort.Float64s(numbers)
+	mid := len(numbers) / 2
+	if len(numbers)%2 == 0 {
+		return (numbers[mid-1] + numbers[mid]) / 2
+	}
+	return numbers[mid]
 }
