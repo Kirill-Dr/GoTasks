@@ -13,8 +13,9 @@ import (
 
 var menu = map[string]func(*account.VaultWithDB){
 	"1": createAccount,
-	"2": findAccount,
-	"3": deleteAccount,
+	"2": findAccountByUrl,
+	"3": findAccountByLogin,
+	"4": deleteAccount,
 }
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	vault := account.NewVault(files.NewJsonDB("data.json"))
 Menu:
 	for {
-		choice := promptData([]string{"1. Create account", "2. Find account", "3. Delete account", "4. Exit", "Choose an option"})
+		choice := promptData([]string{"1. Create account", "2. Find account by url", "3. Find account by login", "4. Delete account", "5. Exit", "Choose an option"})
 		menuFunc := menu[choice]
 		if menuFunc == nil {
 			break Menu
@@ -44,16 +45,28 @@ func createAccount(vault *account.VaultWithDB) {
 	vault.AddAccount(*myAccount)
 }
 
-func findAccount(vault *account.VaultWithDB) {
+func findAccountByUrl(vault *account.VaultWithDB) {
 	url := promptData([]string{"Enter url to find"})
 	foundAccounts := vault.FindAccounts(url, func(acc account.Account, str string) bool {
 		return strings.Contains(acc.Url, str)
 	})
-	if len(foundAccounts) == 0 {
+	outputResult(&foundAccounts)
+}
+
+func findAccountByLogin(vault *account.VaultWithDB) {
+	login := promptData([]string{"Enter login to find"})
+	foundAccounts := vault.FindAccounts(login, func(acc account.Account, str string) bool {
+		return strings.Contains(acc.Login, str)
+	})
+	outputResult(&foundAccounts)
+}
+
+func outputResult(accounts *[]account.Account) {
+	if len(*accounts) == 0 {
 		output.PrintError("No accounts found")
 		return
 	}
-	for index, account := range foundAccounts {
+	for index, account := range *accounts {
 		color.Cyan("Account #" + strconv.Itoa(index+1))
 		account.Output()
 	}
