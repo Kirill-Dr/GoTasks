@@ -8,6 +8,10 @@ type FileService interface {
 	GetFilename() string
 }
 
+type API interface {
+	GetAPIKey() string
+}
+
 type StorageService interface {
 	SaveBins(binList *bins.BinList) error
 	ReadBins() (*bins.BinList, error)

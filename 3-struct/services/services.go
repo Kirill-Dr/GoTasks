@@ -2,6 +2,7 @@ package services
 
 import (
 	"3-struct/bins"
+	"3-struct/config"
 	"3-struct/file"
 	"3-struct/interfaces"
 	"3-struct/storage"
@@ -77,10 +78,12 @@ func (b *BinServiceImpl) GetBinData() (bool, string) {
 type ApplicationServiceImpl struct {
 	storageService interfaces.StorageService
 	binService     interfaces.BinService
+	api            interfaces.API
+	config         *config.Config
 	binList        *bins.BinList
 }
 
-func NewApplicationService(storageService interfaces.StorageService, binService interfaces.BinService) interfaces.ApplicationService {
+func NewApplicationService(storageService interfaces.StorageService, binService interfaces.BinService, api interfaces.API, cfg *config.Config) interfaces.ApplicationService {
 	binList, err := storageService.ReadBins()
 	if err != nil {
 		newList := binService.NewBinList()
@@ -90,6 +93,8 @@ func NewApplicationService(storageService interfaces.StorageService, binService 
 	return &ApplicationServiceImpl{
 		storageService: storageService,
 		binService:     binService,
+		api:            api,
+		config:         cfg,
 		binList:        binList,
 	}
 }
