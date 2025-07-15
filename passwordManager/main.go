@@ -37,7 +37,7 @@ func main() {
 		output.PrintError("Error loading .env file")
 	}
 
-	vault := account.NewVault(files.NewJsonDB("data.json"), *encrypter.NewEncrypter())
+	vault := account.NewVault(files.NewJsonDB("data.inf"), *encrypter.NewEncrypter())
 Menu:
 	for {
 		choice := promptData(menuVariants...)

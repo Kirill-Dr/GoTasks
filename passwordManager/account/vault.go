@@ -5,6 +5,8 @@ import (
 	"passwordManager/encrypter"
 	"passwordManager/output"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type ByteReader interface {
@@ -43,8 +45,10 @@ func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 			enc: enc,
 		}
 	}
+	decryptedData := enc.Decrypt(file)
 	var vault Vault
-	err = json.Unmarshal(file, &vault)
+	err = json.Unmarshal(decryptedData, &vault)
+	color.Cyan("Found %d accounts", len(vault.Accounts))
 	if err != nil {
 		output.PrintError(err)
 		return &VaultWithDB{
@@ -105,5 +109,6 @@ func (vault *VaultWithDB) save() {
 	if err != nil {
 		output.PrintError(err)
 	}
-	vault.db.Write(data)
+	encryptedData := vault.enc.Encrypt(data)
+	vault.db.Write(encryptedData)
 }
