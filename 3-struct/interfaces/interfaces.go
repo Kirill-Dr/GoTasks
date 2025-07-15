@@ -9,6 +9,7 @@ type FileService interface {
 }
 
 type API interface {
+	GetAPIKey() string
 }
 
 type StorageService interface {

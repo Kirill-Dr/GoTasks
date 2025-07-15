@@ -11,3 +11,7 @@ func NewJSONBinAPI(cfg *config.Config) *JSONBinAPI {
 		config: cfg,
 	}
 }
+
+func (api *JSONBinAPI) GetAPIKey() string {
+	return api.config.Key
+}
