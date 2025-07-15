@@ -2,33 +2,11 @@ package services
 
 import (
 	"3-struct/bins"
-	"3-struct/file"
+	"3-struct/config"
 	"3-struct/interfaces"
 	"3-struct/storage"
 	"fmt"
 )
-
-type FileServiceImpl struct {
-	jsonFile *file.JsonFile
-}
-
-func NewFileService(filename string) interfaces.FileService {
-	return &FileServiceImpl{
-		jsonFile: file.NewJsonFile(filename),
-	}
-}
-
-func (f *FileServiceImpl) ReadFile() ([]byte, error) {
-	return f.jsonFile.ReadFile()
-}
-
-func (f *FileServiceImpl) IsJsonFile() bool {
-	return f.jsonFile.IsJsonFile()
-}
-
-func (f *FileServiceImpl) GetFilename() string {
-	return f.jsonFile.GetFilename()
-}
 
 type StorageServiceImpl struct {
 	storage *storage.Storage
@@ -77,10 +55,11 @@ func (b *BinServiceImpl) GetBinData() (bool, string) {
 type ApplicationServiceImpl struct {
 	storageService interfaces.StorageService
 	binService     interfaces.BinService
+	config         *config.Config
 	binList        *bins.BinList
 }
 
-func NewApplicationService(storageService interfaces.StorageService, binService interfaces.BinService) interfaces.ApplicationService {
+func NewApplicationService(storageService interfaces.StorageService, binService interfaces.BinService, cfg *config.Config) interfaces.ApplicationService {
 	binList, err := storageService.ReadBins()
 	if err != nil {
 		newList := binService.NewBinList()
@@ -90,6 +69,7 @@ func NewApplicationService(storageService interfaces.StorageService, binService 
 	return &ApplicationServiceImpl{
 		storageService: storageService,
 		binService:     binService,
+		config:         cfg,
 		binList:        binList,
 	}
 }

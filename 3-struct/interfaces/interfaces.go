@@ -2,12 +2,6 @@ package interfaces
 
 import "3-struct/bins"
 
-type FileService interface {
-	ReadFile() ([]byte, error)
-	IsJsonFile() bool
-	GetFilename() string
-}
-
 type StorageService interface {
 	SaveBins(binList *bins.BinList) error
 	ReadBins() (*bins.BinList, error)
