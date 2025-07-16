@@ -17,17 +17,21 @@ func GetMyLocation(city string) (*GeoData, error) {
 			City: city,
 		}, nil
 	}
+
 	resp, err := http.Get("https://ipapi.co/json/")
 	if err != nil {
 		return nil, err
 	}
+
 	if resp.StatusCode != 200 {
 		return nil, errors.New("failed to get location")
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	var geo GeoData
 	json.Unmarshal(body, &geo)
 	return &geo, nil
