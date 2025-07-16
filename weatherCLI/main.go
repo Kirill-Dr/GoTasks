@@ -3,22 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
-	"strings"
+	"weatherCLI/geo"
 )
 
 func main() {
 	city := flag.String("city", "", "User's city")
-	format := flag.Int("format", 1, "Format of output")
+	// format := flag.Int("format", 1, "Format of output")
 	flag.Parse()
-	fmt.Println(*city, *format)
+	fmt.Println(*city)
 
-	reader := strings.NewReader("Hello")
-	block := make([]byte, 4)
-	for {
-		if _, err := reader.Read(block); err == io.EOF {
-			break
-		}
-		fmt.Printf("%q\n", block)
+	geoData, err := geo.GetMyLocation(*city)
+	if err != nil {
+		fmt.Println(err.Error())
 	}
+	fmt.Println(geoData)
 }
