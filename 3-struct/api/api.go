@@ -96,7 +96,7 @@ func (a *API) CreateBin(fileReader file.FileReader, binName string, storage *sto
 	return nil
 }
 
-func (a *API) GetBinList(binId string) error {
+func (a *API) GetBinById(binId string) error {
 	if binId == "" {
 		return fmt.Errorf("bin id is required")
 	}
@@ -116,7 +116,7 @@ func (a *API) GetBinList(binId string) error {
 	return nil
 }
 
-func (a *API) UpdateBin(binId string, fileReader file.FileReader) error {
+func (a *API) UpdateBinById(binId string, fileReader file.FileReader) error {
 	if binId == "" {
 		return fmt.Errorf("bin id is required")
 	}
@@ -137,7 +137,7 @@ func (a *API) UpdateBin(binId string, fileReader file.FileReader) error {
 	return nil
 }
 
-func (a *API) DeleteBin(binId string, storage *storage.FileStorage) error {
+func (a *API) DeleteBinById(binId string, storage *storage.FileStorage) error {
 	if binId == "" {
 		return fmt.Errorf("bin id is required")
 	}

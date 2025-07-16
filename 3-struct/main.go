@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -29,13 +30,24 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		panic(err.Error())
+		fmt.Printf("Error loading .env: %v\n", err)
+		os.Exit(1)
 	}
 
 	config := config.NewConfig()
 	storage := storage.NewStorage("bins.json")
 
 	api := api.NewAPI(config.Key)
+
+	if !*create && !*update && !*get && !*delete && !*list {
+		fmt.Println("Usage:")
+		fmt.Println("  go run main.go --create --file=\"data.json\" --name=\"my-bin\"")
+		fmt.Println("  go run main.go --update --file=\"data.json\" --id=\"bin-id\"")
+		fmt.Println("  go run main.go --get --id=\"bin-id\"")
+		fmt.Println("  go run main.go --delete --id=\"bin-id\"")
+		fmt.Println("  go run main.go --list")
+		os.Exit(1)
+	}
 
 	executeWithFlags(api, storage, create, update, get, delete, list, filename, binName, binId)
 }
@@ -61,7 +73,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 		}
 
 		fileReader := file.NewJSONFileReader(*filename)
-		err := api.UpdateBin(*id, fileReader)
+		err := api.UpdateBinById(*id, fileReader)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -74,7 +86,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 			panic("id is required")
 		}
 
-		err := api.GetBinList(*id)
+		err := api.GetBinById(*id)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -87,7 +99,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 			panic("id is required")
 		}
 
-		err := api.DeleteBin(*id, storage)
+		err := api.DeleteBinById(*id, storage)
 		if err != nil {
 			panic(err.Error())
 		}
