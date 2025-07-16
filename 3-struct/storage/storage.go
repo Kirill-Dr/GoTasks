@@ -1,57 +1,44 @@
 package storage
 
 import (
-	"encoding/json"
-	"errors"
-	"os"
-
 	"3-struct/bins"
-	"3-struct/file"
+	"encoding/json"
+	"os"
+	"time"
 )
 
-type Storage struct {
-	jsonFile *file.JsonFile
+type Storage interface {
+	SaveBins(binList *bins.BinList) error
+	ReadBins() (*bins.BinList, error)
 }
 
-func NewStorage(filename string) *Storage {
-	return &Storage{
-		jsonFile: file.NewJsonFile(filename),
+type FileStorage struct {
+	filename string
+}
+
+func NewStorage(filename string) *FileStorage {
+	return &FileStorage{
+		filename: filename,
 	}
 }
 
-func (storage *Storage) SaveBins(binList *bins.BinList) error {
-	if !storage.jsonFile.IsJsonFile() {
-		return errors.New("file is not a JSON file")
-	}
-
+func (s *FileStorage) SaveBins(binList *bins.BinList) error {
+	binList.UpdatedAt = time.Now()
 	data, err := json.Marshal(binList)
 	if err != nil {
-		return errors.New("error marshalling data")
+		return err
 	}
 
-	err = os.WriteFile(storage.jsonFile.GetFilename(), data, 0644)
-	if err != nil {
-		return errors.New("error writing file")
-	}
-
-	return nil
+	return os.WriteFile(s.filename, data, 0644)
 }
 
-func (storage *Storage) ReadBins() (*bins.BinList, error) {
-	if !storage.jsonFile.IsJsonFile() {
-		return nil, errors.New("file is not a JSON file")
-	}
-
-	data, err := storage.jsonFile.ReadFile()
+func (s *FileStorage) ReadBins() (*bins.BinList, error) {
+	data, err := os.ReadFile(s.filename)
 	if err != nil {
-		return nil, errors.New("error reading file")
+		return nil, err
 	}
 
 	var binList bins.BinList
-	err = json.Unmarshal(data, &binList)
-	if err != nil {
-		return nil, errors.New("error serializing JSON")
-	}
-
+	json.Unmarshal(data, &binList)
 	return &binList, nil
 }
