@@ -10,6 +10,7 @@ import (
 type Storage interface {
 	SaveBins(binList *bins.BinList) error
 	ReadBins() (*bins.BinList, error)
+	GetFilename() string
 }
 
 type FileStorage struct {
@@ -41,4 +42,8 @@ func (s *FileStorage) ReadBins() (*bins.BinList, error) {
 	var binList bins.BinList
 	json.Unmarshal(data, &binList)
 	return &binList, nil
+}
+
+func (s *FileStorage) GetFilename() string {
+	return s.filename
 }

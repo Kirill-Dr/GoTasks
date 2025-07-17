@@ -59,7 +59,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 		}
 
 		fileReader := file.NewJSONFileReader(*filename)
-		err := api.CreateBin(fileReader, *name, storage)
+		_, err := api.CreateBin(fileReader, *name, storage)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -73,7 +73,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 		}
 
 		fileReader := file.NewJSONFileReader(*filename)
-		err := api.UpdateBinById(*id, fileReader)
+		_, err := api.UpdateBinById(*id, fileReader)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -86,7 +86,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 			panic("id is required")
 		}
 
-		err := api.GetBinById(*id)
+		_, err := api.GetBinById(*id)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -99,7 +99,7 @@ func executeWithFlags(api *api.API, storage *storage.FileStorage, create, update
 			panic("id is required")
 		}
 
-		err := api.DeleteBinById(*id, storage)
+		_, err := api.DeleteBinById(*id, storage)
 		if err != nil {
 			panic(err.Error())
 		}
