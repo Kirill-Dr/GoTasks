@@ -22,14 +22,26 @@ func TestGetWeather(t *testing.T) {
 	}
 }
 
+var testCases = []struct {
+	name   string
+	format int
+}{
+	{name: "Big format", format: 147},
+	{name: "Zero format", format: 0},
+	{name: "Negative format", format: -1},
+}
+
 func TestGetWeatherWrongFormat(t *testing.T) {
-	expectedCity := "London"
-	geoData := geo.GeoData{
-		City: expectedCity,
-	}
-	format := 100
-	_, err := weather.GetWeather(geoData, format)
-	if err != weather.ErrorWrongFormat {
-		t.Errorf("Expected error %v, but got %v", weather.ErrorWrongFormat, err)
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			expectedCity := "London"
+			geoData := geo.GeoData{
+				City: expectedCity,
+			}
+			_, err := weather.GetWeather(geoData, testCase.format)
+			if err != weather.ErrorWrongFormat {
+				t.Errorf("Expected error %v, but got %v", weather.ErrorWrongFormat, err)
+			}
+		})
 	}
 }
