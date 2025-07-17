@@ -20,7 +20,7 @@ func GetMyLocation(city string) (*GeoData, error) {
 	if city != "" {
 		isCity := checkCity(city)
 		if !isCity {
-			panic("city not found")
+			return nil, errors.New("no city")
 		}
 		return &GeoData{
 			City: city,
