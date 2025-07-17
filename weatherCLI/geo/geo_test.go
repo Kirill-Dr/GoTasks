@@ -20,3 +20,11 @@ func TestGetMyLocation(t *testing.T) {
 	}
 
 }
+
+func TestGetMyLocationNoCity(t *testing.T) {
+	city := "Londonfsd"
+	_, err := geo.GetMyLocation(city)
+	if err != geo.ErrorNoCity {
+		t.Errorf("Expected error %v, but got %v", geo.ErrorNoCity, err)
+	}
+}
