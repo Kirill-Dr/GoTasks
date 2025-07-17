@@ -1,7 +1,7 @@
 package weather
 
 import (
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -9,25 +9,30 @@ import (
 	"weatherCLI/geo"
 )
 
-func GetWeather(geo geo.GeoData, format int) string {
+var ErrorWrongFormat = errors.New("format must be between 1 and 4")
+var ErrorParseURL = errors.New("failed to parse URL")
+var ErrorHTTPGet = errors.New("failed to perform HTTP GET request")
+var ErrorReadBody = errors.New("failed to read response body")
+
+func GetWeather(geo geo.GeoData, format int) (string, error) {
+	if format < 1 || format > 4 {
+		return "", ErrorWrongFormat
+	}
 	baseUrl, err := url.Parse("https://wttr.in/" + geo.City)
 	if err != nil {
-		fmt.Println(err.Error())
-		return ""
+		return "", ErrorParseURL
 	}
 	params := url.Values{}
 	params.Add("format", strconv.Itoa(format))
 	baseUrl.RawQuery = params.Encode()
 	resp, err := http.Get(baseUrl.String())
 	if err != nil {
-		fmt.Println(err.Error())
-		return ""
+		return "", ErrorHTTPGet
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println(err.Error())
-		return ""
+		return "", ErrorReadBody
 	}
-	return string(body)
+	return string(body), nil
 }
